@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
   Bold, 
   Italic, 
@@ -40,8 +41,31 @@ export const FormatToolbar: React.FC<FormatToolbarProps> = ({ onFormat }) => {
     onFormat('fontSize', e.target.value);
   };
 
+  const handleHeadingChange = (value: string) => {
+    if (value === 'normal') {
+      onFormat('formatBlock', 'div');
+    } else {
+      onFormat('formatBlock', value);
+    }
+  };
+
   return (
     <div className="bg-gradient-to-r from-slate-50 to-blue-50 border-b border-slate-200 p-3 flex items-center gap-2 flex-wrap">
+      <Select onValueChange={handleHeadingChange} defaultValue="normal">
+        <SelectTrigger className="w-32 bg-white/50 border-slate-200 shadow-sm hover:bg-white/80">
+          <SelectValue placeholder="Heading" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="normal">Normal</SelectItem>
+          <SelectItem value="h1">Heading 1</SelectItem>
+          <SelectItem value="h2">Heading 2</SelectItem>
+          <SelectItem value="h3">Heading 3</SelectItem>
+          <SelectItem value="h4">Heading 4</SelectItem>
+          <SelectItem value="h5">Heading 5</SelectItem>
+          <SelectItem value="h6">Heading 6</SelectItem>
+        </SelectContent>
+      </Select>
+
       <select 
         onChange={handleFontSizeChange}
         className="px-3 py-2 bg-white/50 border border-slate-200 rounded-lg text-sm shadow-sm hover:bg-white/80 transition-colors"

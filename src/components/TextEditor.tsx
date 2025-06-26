@@ -25,21 +25,38 @@ const TextEditor = () => {
   const htmlToMarkdown = (html: string): string => {
     let markdown = html;
     
-    // Convert HTML tags to markdown
-    markdown = markdown.replace(/<strong>|<b>/g, '**');
-    markdown = markdown.replace(/<\/strong>|<\/b>/g, '**');
-    markdown = markdown.replace(/<em>|<i>/g, '*');
-    markdown = markdown.replace(/<\/em>|<\/i>/g, '*');
-    markdown = markdown.replace(/<u>/g, '<u>');
-    markdown = markdown.replace(/<\/u>/g, '</u>');
-    markdown = markdown.replace(/<br\s*\/?>/g, '\n');
-    markdown = markdown.replace(/<\/p>/g, '\n\n');
-    markdown = markdown.replace(/<p>/g, '');
-    markdown = markdown.replace(/<li>/g, '- ');
-    markdown = markdown.replace(/<\/li>/g, '\n');
-    markdown = markdown.replace(/<ul>|<\/ul>|<ol>|<\/ol>/g, '\n');
+    // Convert headers
+    markdown = markdown.replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n');
+    markdown = markdown.replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n');
+    markdown = markdown.replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n');
+    markdown = markdown.replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n');
+    markdown = markdown.replace(/<h5[^>]*>(.*?)<\/h5>/gi, '##### $1\n\n');
+    markdown = markdown.replace(/<h6[^>]*>(.*?)<\/h6>/gi, '###### $1\n\n');
     
-    // Clean up extra whitespace
+    // Convert formatting
+    markdown = markdown.replace(/<strong[^>]*>|<b[^>]*>/gi, '**');
+    markdown = markdown.replace(/<\/strong>|<\/b>/gi, '**');
+    markdown = markdown.replace(/<em[^>]*>|<i[^>]*>/gi, '*');
+    markdown = markdown.replace(/<\/em>|<\/i>/gi, '*');
+    markdown = markdown.replace(/<u[^>]*>/gi, '<u>');
+    markdown = markdown.replace(/<\/u>/gi, '</u>');
+    
+    // Convert lists
+    markdown = markdown.replace(/<ul[^>]*>/gi, '\n');
+    markdown = markdown.replace(/<\/ul>/gi, '\n');
+    markdown = markdown.replace(/<ol[^>]*>/gi, '\n');
+    markdown = markdown.replace(/<\/ol>/gi, '\n');
+    markdown = markdown.replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n');
+    
+    // Convert paragraphs and line breaks
+    markdown = markdown.replace(/<br\s*\/?>/gi, '\n');
+    markdown = markdown.replace(/<\/p>/gi, '\n\n');
+    markdown = markdown.replace(/<p[^>]*>/gi, '');
+    markdown = markdown.replace(/<div[^>]*>/gi, '');
+    markdown = markdown.replace(/<\/div>/gi, '\n');
+    
+    // Clean up extra whitespace and HTML tags
+    markdown = markdown.replace(/<[^>]*>/g, '');
     markdown = markdown.replace(/\n{3,}/g, '\n\n');
     markdown = markdown.trim();
     
@@ -49,13 +66,33 @@ const TextEditor = () => {
   const markdownToHtml = (markdown: string): string => {
     let html = markdown;
     
-    // Convert markdown to HTML
+    // Convert headers
+    html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+    html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+    html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+    html = html.replace(/^#### (.*$)/gm, '<h4>$1</h4>');
+    html = html.replace(/^##### (.*$)/gm, '<h5>$1</h5>');
+    html = html.replace(/^###### (.*$)/gm, '<h6>$1</h6>');
+    
+    // Convert bold and italic (be careful with order)
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    html = html.replace(/(?<!\*)\*([^*]+)\*(?!\*)/g, '<em>$1</em>');
+    
+    // Convert underline
+    html = html.replace(/<u>(.*?)<\/u>/g, '<u>$1</u>');
+    
+    // Convert lists
+    html = html.replace(/^\- (.*)$/gm, '<li>$1</li>');
+    html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+    
+    // Convert paragraphs and line breaks
     html = html.replace(/\n\n/g, '</p><p>');
     html = html.replace(/\n/g, '<br>');
-    html = html.replace(/^(.+)/, '<p>$1');
-    html = html.replace(/(.+)$/, '$1</p>');
+    
+    // Wrap in paragraphs if not already wrapped in block elements
+    if (!html.match(/^<(h[1-6]|ul|ol|p)/)) {
+      html = '<p>' + html + '</p>';
+    }
     
     return html;
   };
