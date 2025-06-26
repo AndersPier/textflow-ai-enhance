@@ -37,13 +37,9 @@ export const FormatToolbar: React.FC<FormatToolbarProps> = ({ onFormat }) => {
     onFormat('foreColor', e.target.value);
   };
 
-  const handleFontSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onFormat('fontSize', e.target.value);
-  };
-
   const handleHeadingChange = (value: string) => {
-    if (value === 'normal') {
-      onFormat('formatBlock', 'div');
+    if (value === 'p') {
+      onFormat('formatBlock', 'p');
     } else {
       onFormat('formatBlock', value);
     }
@@ -51,31 +47,18 @@ export const FormatToolbar: React.FC<FormatToolbarProps> = ({ onFormat }) => {
 
   return (
     <div className="bg-gradient-to-r from-slate-50 to-blue-50 border-b border-slate-200 p-3 flex items-center gap-2 flex-wrap">
-      <Select onValueChange={handleHeadingChange} defaultValue="normal">
-        <SelectTrigger className="w-32 bg-white/50 border-slate-200 shadow-sm hover:bg-white/80">
-          <SelectValue placeholder="Heading" />
+      <Select onValueChange={handleHeadingChange} defaultValue="p">
+        <SelectTrigger className="w-40 bg-white/50 border-slate-200 shadow-sm hover:bg-white/80">
+          <SelectValue placeholder="Text Style" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="normal">Normal</SelectItem>
-          <SelectItem value="h1">Heading 1</SelectItem>
-          <SelectItem value="h2">Heading 2</SelectItem>
-          <SelectItem value="h3">Heading 3</SelectItem>
-          <SelectItem value="h4">Heading 4</SelectItem>
-          <SelectItem value="h5">Heading 5</SelectItem>
-          <SelectItem value="h6">Heading 6</SelectItem>
+          <SelectItem value="p">Normal Text</SelectItem>
+          <SelectItem value="h1">Large Header</SelectItem>
+          <SelectItem value="h2">Medium Header</SelectItem>
+          <SelectItem value="h3">Small Header</SelectItem>
+          <SelectItem value="h4">Subheading</SelectItem>
         </SelectContent>
       </Select>
-
-      <select 
-        onChange={handleFontSizeChange}
-        className="px-3 py-2 bg-white/50 border border-slate-200 rounded-lg text-sm shadow-sm hover:bg-white/80 transition-colors"
-        defaultValue="3"
-      >
-        <option value="1">Small</option>
-        <option value="3">Normal</option>
-        <option value="5">Large</option>
-        <option value="7">Extra Large</option>
-      </select>
 
       <div className="w-px h-6 bg-slate-300 mx-1" />
 

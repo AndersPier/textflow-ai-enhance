@@ -25,27 +25,21 @@ const TextEditor = () => {
   const htmlToMarkdown = (html: string): string => {
     let markdown = html;
     
-    // Convert headers
+    // Convert headers with proper markdown syntax
     markdown = markdown.replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n\n');
     markdown = markdown.replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n\n');
     markdown = markdown.replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n\n');
     markdown = markdown.replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n\n');
-    markdown = markdown.replace(/<h5[^>]*>(.*?)<\/h5>/gi, '##### $1\n\n');
-    markdown = markdown.replace(/<h6[^>]*>(.*?)<\/h6>/gi, '###### $1\n\n');
     
     // Convert formatting
     markdown = markdown.replace(/<strong[^>]*>|<b[^>]*>/gi, '**');
     markdown = markdown.replace(/<\/strong>|<\/b>/gi, '**');
     markdown = markdown.replace(/<em[^>]*>|<i[^>]*>/gi, '*');
     markdown = markdown.replace(/<\/em>|<\/i>/gi, '*');
-    markdown = markdown.replace(/<u[^>]*>/gi, '<u>');
-    markdown = markdown.replace(/<\/u>/gi, '</u>');
     
     // Convert lists
     markdown = markdown.replace(/<ul[^>]*>/gi, '\n');
     markdown = markdown.replace(/<\/ul>/gi, '\n');
-    markdown = markdown.replace(/<ol[^>]*>/gi, '\n');
-    markdown = markdown.replace(/<\/ol>/gi, '\n');
     markdown = markdown.replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n');
     
     // Convert paragraphs and line breaks
@@ -55,7 +49,7 @@ const TextEditor = () => {
     markdown = markdown.replace(/<div[^>]*>/gi, '');
     markdown = markdown.replace(/<\/div>/gi, '\n');
     
-    // Clean up extra whitespace and HTML tags
+    // Clean up extra whitespace and remaining HTML tags
     markdown = markdown.replace(/<[^>]*>/g, '');
     markdown = markdown.replace(/\n{3,}/g, '\n\n');
     markdown = markdown.trim();
@@ -71,28 +65,34 @@ const TextEditor = () => {
     html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
     html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
     html = html.replace(/^#### (.*$)/gm, '<h4>$1</h4>');
-    html = html.replace(/^##### (.*$)/gm, '<h5>$1</h5>');
-    html = html.replace(/^###### (.*$)/gm, '<h6>$1</h6>');
     
-    // Convert bold and italic (be careful with order)
+    // Convert bold and italic
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     html = html.replace(/(?<!\*)\*([^*]+)\*(?!\*)/g, '<em>$1</em>');
-    
-    // Convert underline
-    html = html.replace(/<u>(.*?)<\/u>/g, '<u>$1</u>');
     
     // Convert lists
     html = html.replace(/^\- (.*)$/gm, '<li>$1</li>');
     html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
     
     // Convert paragraphs and line breaks
-    html = html.replace(/\n\n/g, '</p><p>');
-    html = html.replace(/\n/g, '<br>');
+    const lines = html.split('\n');
+    const processedLines = [];
     
-    // Wrap in paragraphs if not already wrapped in block elements
-    if (!html.match(/^<(h[1-6]|ul|ol|p)/)) {
-      html = '<p>' + html + '</p>';
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (line === '') {
+        processedLines.push('');
+      } else if (line.match(/^<(h[1-4]|ul|li)/)) {
+        processedLines.push(line);
+      } else if (!line.match(/^<\/?(h[1-4]|ul|li)/)) {
+        processedLines.push(`<p>${line}</p>`);
+      } else {
+        processedLines.push(line);
+      }
     }
+    
+    html = processedLines.join('\n');
+    html = html.replace(/\n{2,}/g, '\n');
     
     return html;
   };
@@ -291,7 +291,7 @@ const TextEditor = () => {
             ref={editorRef}
             contentEditable
             onInput={handleContentChange}
-            className="min-h-[500px] p-8 focus:outline-none prose prose-lg max-w-none text-slate-800 leading-relaxed"
+            className="min-h-[500px] p-8 focus:outline-none text-slate-800 leading-relaxed editor-content"
             style={{ whiteSpace: 'pre-wrap' }}
             suppressContentEditableWarning={true}
             data-placeholder="Start writing your masterpiece..."
