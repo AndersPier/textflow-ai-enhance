@@ -6,6 +6,7 @@ services:
     #ports:
     #  - "3000:80"
     container_name: texteditor-app
+    pull_policy: always
     restart: unless-stopped
     environment:
       - NODE_ENV=production
