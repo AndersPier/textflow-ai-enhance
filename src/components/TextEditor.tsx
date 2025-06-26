@@ -1,9 +1,8 @@
-
 import React, { useState, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { FormatToolbar } from './FormatToolbar';
 import { analyzeTextWithOpenAI } from '@/utils/openai';
@@ -208,17 +207,22 @@ const TextEditor = () => {
               <DialogContent className="bg-white/95 backdrop-blur-sm">
                 <DialogHeader>
                   <DialogTitle className="text-slate-800">OpenAI API Configuration</DialogTitle>
+                  <DialogDescription className="text-slate-600">
+                    Configure your OpenAI API key to enable text analysis features.
+                  </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="api-key" className="text-slate-700">OpenAI API Key</Label>
+                    <Label htmlFor="openai-api-key" className="text-slate-700">OpenAI API Key</Label>
                     <Input
-                      id="api-key"
+                      id="openai-api-key"
+                      name="openai-api-key"
                       type="password"
                       value={apiKey}
                       onChange={(e) => setApiKey(e.target.value)}
                       placeholder="sk-..."
                       className="mt-1 bg-white/50"
+                      autoComplete="off"
                     />
                     <p className="text-sm text-slate-500 mt-1">
                       Your API key is stored locally and never sent to our servers.
