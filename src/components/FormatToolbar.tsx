@@ -41,10 +41,10 @@ export const FormatToolbar: React.FC<FormatToolbarProps> = ({ onFormat }) => {
   };
 
   return (
-    <div className="border-b bg-gray-50 p-2 flex items-center gap-1 flex-wrap">
+    <div className="bg-gradient-to-r from-slate-50 to-blue-50 border-b border-slate-200 p-3 flex items-center gap-2 flex-wrap">
       <select 
         onChange={handleFontSizeChange}
-        className="px-2 py-1 border rounded text-sm"
+        className="px-3 py-2 bg-white/50 border border-slate-200 rounded-lg text-sm shadow-sm hover:bg-white/80 transition-colors"
         defaultValue="3"
       >
         <option value="1">Small</option>
@@ -53,7 +53,7 @@ export const FormatToolbar: React.FC<FormatToolbarProps> = ({ onFormat }) => {
         <option value="7">Extra Large</option>
       </select>
 
-      <div className="w-px h-6 bg-gray-300 mx-1" />
+      <div className="w-px h-6 bg-slate-300 mx-1" />
 
       {formatButtons.map(({ command, icon: Icon, title }) => (
         <Button
@@ -62,18 +62,18 @@ export const FormatToolbar: React.FC<FormatToolbarProps> = ({ onFormat }) => {
           size="sm"
           onClick={() => onFormat(command)}
           title={title}
-          className="h-8 w-8 p-0"
+          className="h-9 w-9 p-0 hover:bg-white/60 hover:shadow-sm transition-all duration-200"
         >
-          <Icon className="h-4 w-4" />
+          <Icon className="h-4 w-4 text-slate-600" />
         </Button>
       ))}
 
-      <div className="w-px h-6 bg-gray-300 mx-1" />
+      <div className="w-px h-6 bg-slate-300 mx-1" />
 
       <input
         type="color"
         onChange={handleColorChange}
-        className="w-8 h-8 rounded border cursor-pointer"
+        className="w-9 h-9 rounded-lg border border-slate-200 cursor-pointer shadow-sm hover:shadow-md transition-shadow"
         title="Text Color"
       />
     </div>
